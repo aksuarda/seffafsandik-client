@@ -51,6 +51,7 @@ export const databases = {
 
 export const submitResult = httpsCallable<
   {
+    userId: string;
     votes: { total: number; none: number; rte: number; kk: number };
     storageUrl: string;
     imageUrl: string;

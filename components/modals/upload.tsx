@@ -9,12 +9,14 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 type TModal = { tag: string; data: any; history: { tag: string; data: any }[] };
 
 export default function Upload({
+  userId,
   city,
   district,
   neighborhood,
   box,
   setModal,
 }: {
+  userId: string;
   city: string;
   district: string;
   neighborhood: string;
@@ -152,6 +154,7 @@ export default function Upload({
                   const imageUrl = await getDownloadURL(snapshot.ref);
 
                   const response = await submitResult({
+                    userId,
                     city,
                     district,
                     neighborhood,

@@ -15,6 +15,7 @@ import { InfoOutlined, GitHub } from "@mui/icons-material";
 import { Switch } from "@headlessui/react";
 import Head from "next/head";
 import Link from "next/link";
+import useUser from "@/hooks/useUser";
 
 type TModal = { tag: string; data: any; history: { tag: string; data: any }[] };
 
@@ -48,19 +49,7 @@ export default function Home() {
 
   const [info, setInfo] = useState<{ result?: string; upload?: string; verify?: string }>({});
 
-  useEffect(() => {
-    return onValue(ref(databases.cache, ".info"), async (snapshot) => {
-      if (snapshot.val()?.connected) {
-        const refUser = await push(ref(databases.cache, "presence/users"));
-        onDisconnect(refUser).remove();
-        set(refUser, serverTimestamp());
-
-        const refCount = ref(databases.cache, "presence/count");
-        onDisconnect(refCount).set(increment(-1));
-        set(refCount, increment(1));
-      }
-    });
-  }, []);
+  const { userId } = useUser();
 
   useEffect(() => {
     const t = Date.now();
@@ -299,9 +288,11 @@ export default function Home() {
                 </div>
 
                 <div className="mt-6 flex justify-center items-center">
-                  <div className="">28 Mayıs (Test)</div>
+                  <div className="">28 Mayıs</div>
                   <Tooltip
-                    title="Sisteme isteyen herkes sonuç yükleyebilmektedir. Seçim öncesinde test amaçlı olarak yüklenen sonuçlar doğrudan sisteme işlenmektedir. 28 Mayıs'ta yüklenecek sonuçlara, suistimal edilmesini engellemek amacıyla çok katmanlı doğrulama prosedürü uygulanacaktır."
+                    title="Sisteme herkes sonuç yükleyebilmekte ve yüklenen tüm sonuçları görülebilmektedir. 
+                    Fakat olası suistimali engellemek amacıyla sonuçların ülke/il/ilçe/mahalle bazında işlenmesi daha sonra uygulanacak doğrulama proseründen sonra yapılacaktır. 
+                    (Seçim öncesinde test amaçlı olarak sonuçlar sisteme doğrudan işlenmekte ve herhangi bir doğrulama prosedürü bulunmamaktadır. "
                     placement="top"
                     enterTouchDelay={0}
                   >
