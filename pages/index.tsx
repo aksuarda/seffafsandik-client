@@ -11,9 +11,10 @@ import clsx from "clsx";
 import { getPath, getPercent } from "@/helpers/misc";
 import useApiRequests from "@/hooks/useApiRequests";
 import { Tooltip } from "@mui/material";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { InfoOutlined, GitHub } from "@mui/icons-material";
 import { Switch } from "@headlessui/react";
 import Head from "next/head";
+import Link from "next/link";
 
 type TModal = { tag: string; data: any; history: { tag: string; data: any }[] };
 
@@ -230,7 +231,7 @@ export default function Home() {
                     placement="top"
                     enterTouchDelay={0}
                   >
-                    <InfoOutlinedIcon sx={{ fontSize: 15 }} className="ml-1 mb-2 cursor-pointer" />
+                    <InfoOutlined sx={{ fontSize: 15 }} className="ml-1 mb-2 cursor-pointer" />
                   </Tooltip>
                 </div>
                 <div className="mt-2 flex justify-center">
@@ -249,7 +250,7 @@ export default function Home() {
                     placement="top"
                     enterTouchDelay={0}
                   >
-                    <InfoOutlinedIcon sx={{ fontSize: 15 }} className="ml-1 mb-2 cursor-pointer" />
+                    <InfoOutlined sx={{ fontSize: 15 }} className="ml-1 mb-2 cursor-pointer" />
                   </Tooltip>
                 </div>
                 <div className="mt-2 flex justify-center">
@@ -304,7 +305,7 @@ export default function Home() {
                     placement="top"
                     enterTouchDelay={0}
                   >
-                    <InfoOutlinedIcon sx={{ fontSize: 15 }} className="ml-1 mb-2 cursor-pointer" />
+                    <InfoOutlined sx={{ fontSize: 15 }} className="ml-1 mb-2 cursor-pointer" />
                   </Tooltip>
                 </div>
                 <div className="mt-2 flex justify-center">
@@ -460,6 +461,11 @@ export default function Home() {
             >
               Sonuç Doğrula
             </motion.button>
+          </div>
+          <div className="mt-12 flex justify-center">
+            <Link href="https://github.com/aksuarda/seffafsandik-client">
+              <GitHub color="disabled" />
+            </Link>
           </div>
           <div className="h-12"></div>
         </div>
