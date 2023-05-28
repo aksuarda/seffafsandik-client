@@ -17,7 +17,7 @@ export default function () {
               await push(ref(databases.cache, "users"), {
                 timeCreated: serverTimestamp(),
                 timeUpdate: serverTimestamp(),
-                counter: 1,
+                logins: 1,
               })
             ).key || makeid(20);
           localStorage.setItem("userId", userId);
@@ -26,7 +26,7 @@ export default function () {
         } else {
           update(ref(databases.cache, `users/${userId}`), {
             timeUpdate: serverTimestamp(),
-            counter: increment(1),
+            logins: increment(1),
           });
         }
 

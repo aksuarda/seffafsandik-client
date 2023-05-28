@@ -24,12 +24,31 @@ export function getPath(
   );
 }
 
-export function getPercent(data: any, source: string, candidate: string) {
+export function getTotalVotes(data: any) {
   let sum = 0;
-  for (const candidate of ["rte", "mi", "kk", "so"]) {
-    sum += data[source][candidate] || 0;
+  for (const candidate of ["rte", "mi", "kk", "so", "ma", "dp", "tk", "sd"]) {
+    sum += data?.[candidate] || 0;
   }
-  return ((sum ? data[source][candidate] / sum : 0) * 100).toFixed(2);
+  return sum;
+}
+
+export function getPercent(data: any, candidate: string) {
+  const sum = getTotalVotes(data);
+  return ((sum ? data?.[candidate] / sum : 0) * 100).toFixed(2);
+}
+
+export function getPercentWithVotes(data: any, candidate: string) {
+  return `%${getPercent(data, candidate)} (${new Intl.NumberFormat("en").format(data?.[candidate] || 0)})`;
+}
+
+export function getSubmits(submits: any, round: number, tag: string) {
+  const results = [];
+  for (const key of Object.keys(submits || {})) {
+    if (Number(submits[key]?.round) === round && submits[key]?.tag === tag) {
+      results.push({ id: key, ...submits[key] });
+    }
+  }
+  return results;
 }
 
 export function pause(ms: number) {

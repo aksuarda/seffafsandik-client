@@ -77,7 +77,10 @@ export async function updateClick({
   tag: string;
 }) {
   await set(
-    ref(databases.cache, getPath(city, district, neighborhood, box).replace("results", "clicks") + "/" + tag),
+    ref(
+      databases.cache,
+      getPath(city, district, neighborhood, box).replace("results", "clicks").replaceAll(".", "") + "/" + tag
+    ),
     increment(1)
   );
 }

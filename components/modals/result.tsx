@@ -28,7 +28,7 @@ export default function Upload({
   district: string;
   neighborhood: string;
   box: string;
-  submits: TSubmits;
+  submits: TSubmits | undefined;
   setModal: Dispatch<SetStateAction<TModal | undefined>>;
 }) {
   const [id, setId] = useState<string>("");

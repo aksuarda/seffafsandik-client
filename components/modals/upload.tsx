@@ -167,7 +167,7 @@ export default function Upload({
                   console.log("response", response);
 
                   if (response.data) {
-                    setInfo("Sonuçlar yüklenemedi");
+                    setInfo(response.data);
                   } else {
                     setModal(undefined);
                   }
@@ -184,8 +184,8 @@ export default function Upload({
           {loading ? "Yükleniyor..." : "Yükle"}
         </motion.button>
       </div>
-      <div className="mt-1 text-red-500 flex justify-center text-xs h-3">{info}</div>
-      <div className="mt-2 flex justify-center text-xs text-center">
+      <div className="mt-1 flex justify-center text-xs h-3">{info}</div>
+      <div className="mt-2 text-red-500 flex justify-center text-xs text-center">
         Dikkat: Yüklediğiniz sonucun hatalı çıkması halinde önceki yüklediğiniz tüm sonuçlar silinecek ve yeni sonuç
         yüklemeniz engellenecektir.
       </div>

@@ -53,26 +53,30 @@ export default function Chart({
       setLabels(["Recep Tayyip Erdoğan", "Kemal Kılıçdaroğlu"]);
       setLabelInd(0);
     } else {
-      setLabels(["Yüklenen Sonuç", "Recep Tayyip Erdoğan", "Kemal Kılıçdaroğlu"]);
+      setLabels(["Yüklenen Sonuç", "Recep Tayyip Erdoğan", "Kemal Kılıçdaroğlu", "Toplam Seçmen"]);
       setLabelInd(0);
     }
   }, [neighborhood]);
 
   useEffect(() => {
-    if (labelInd > -1) {
+    if (labels[labelInd]) {
       updateClick({ city, district, neighborhood, box: undefined, tag: "chart/" + labels[labelInd] });
 
       const keys = Object.keys(results._).sort(sortTR);
       const data: any = [{ id: "blank", data: keys.map((e, i) => ({ x: keys[i], y: null })) }];
-      for (const round of ["1", "2"]) {
-        for (const source of ["aa", "oyveotesi", "main"]) {
-          if (source === "aa" && (district || neighborhood)) {
+      for (const round of ["0", "1", "2"]) {
+        for (const source of ["ysk", "aa", "oyveotesi", "main"]) {
+          if (
+            (source === "aa" && (district || neighborhood)) ||
+            (labels[labelInd] === "Yüklenen Sonuç" && ["ysk", "aa"].includes(source)) ||
+            (labels[labelInd] === "Toplam Seçmen" && !["ysk", "aa"].includes(source))
+          ) {
             continue;
           }
           const _data = [];
           for (const key of keys) {
             if (
-              results["_"][key][round][source] &&
+              results["_"][key][round]?.[source] &&
               (results["_"][key][round][source].box || labels[labelInd] === "Yüklenen Sonuç")
             ) {
               _data.push({
@@ -81,9 +85,11 @@ export default function Chart({
                   labels[labelInd] === "Yüklenen Sonuç"
                     ? Number((results["_"][key][round][source].box / results["_"][key][round]["total"].box) * 100)
                     : labels[labelInd] === "Recep Tayyip Erdoğan"
-                    ? Number(getPercent(results["_"][key][round], source, "rte"))
+                    ? Number(getPercent(results["_"][key][round][source], "rte"))
                     : labels[labelInd] === "Kemal Kılıçdaroğlu"
-                    ? Number(getPercent(results["_"][key][round], source, "kk"))
+                    ? Number(getPercent(results["_"][key][round][source], "kk"))
+                    : labels[labelInd] === "Toplam Seçmen"
+                    ? Number(results["_"][key][round][source].total)
                     : 0,
                 round,
                 source: sourceMap[source],
@@ -103,14 +109,19 @@ export default function Chart({
         curve: "monotoneX",
         colors: { scheme: "set2" },
         yScale: { type: "linear", min, max },
-        margin: { top: 30, right: 20, bottom: 20, left: 40 },
+        margin: { top: 10, right: 20, bottom: 10, left: 40 },
         enableGridX: false,
         enableArea: true,
         enableSlices: "x",
-        areaBaselineValue: labels[labelInd] === "Yüklenen Sonuç" ? 0 : 50,
+        areaBaselineValue: ["Yüklenen Sonuç", "Toplam Seçmen"].includes(labels[labelInd]) ? 0 : 50,
         useMesh: true,
         axisBottom: null, //{ tickRotation: -60 },
-        axisLeft: { format: (d: any) => `%${d}` },
+        axisLeft: {
+          format: (d: any) =>
+            labels[labelInd] === "Toplam Seçmen"
+              ? new Intl.NumberFormat("en", { notation: "compact", compactDisplay: "short" }).format(Number(d))
+              : `%${d}`,
+        },
         markers: [],
         defs: [
           {
@@ -140,24 +151,45 @@ export default function Chart({
               }}
             >
               <div className="text-center">{slice.points?.[0]?.data?.x || ""}</div>
-              {map[1] ? (
+              {map[2] ? (
                 <>
-                  <div className="text-left">14 Mayıs</div>
-                  {map[1].map((e: any) => (
+                  <div className="mt-0 text-left">28 Mayıs</div>
+                  {map[2].map((e: any) => (
                     <div key={Math.random()} style={{ color: e.color }}>
-                      <strong>{e.source}</strong> %{e.val.toFixed(2)}
+                      <strong>{e.source}</strong>{" "}
+                      {labels[labelInd] === "Toplam Seçmen"
+                        ? `${new Intl.NumberFormat("en").format(e.val || 0)}`
+                        : `%${e.val.toFixed(2)}`}
                     </div>
                   ))}
                 </>
               ) : (
                 <></>
               )}
-              {map[2] ? (
+              {map[1] ? (
                 <>
-                  <div className="mt-1 text-left">28 Mayıs</div>
-                  {map[2].map((e: any) => (
+                  <div className="mt-1 text-left">14 Mayıs</div>
+                  {map[1].map((e: any) => (
                     <div key={Math.random()} style={{ color: e.color }}>
-                      <strong>{e.source}</strong> %{e.val.toFixed(2)}
+                      <strong>{e.source}</strong>{" "}
+                      {labels[labelInd] === "Toplam Seçmen"
+                        ? `${new Intl.NumberFormat("en").format(e.val || 0)}`
+                        : `%${e.val.toFixed(2)}`}
+                    </div>
+                  ))}
+                </>
+              ) : (
+                <></>
+              )}
+              {map[0] ? (
+                <>
+                  <div className="mt-1 text-left">2018</div>
+                  {map[0].map((e: any) => (
+                    <div key={Math.random()} style={{ color: e.color }}>
+                      <strong>{e.source}</strong>{" "}
+                      {labels[labelInd] === "Toplam Seçmen"
+                        ? `${new Intl.NumberFormat("en").format(e.val || 0)}`
+                        : `%${e.val.toFixed(2)}`}
                     </div>
                   ))}
                 </>
@@ -169,12 +201,12 @@ export default function Chart({
         },
       });
     }
-  }, [results, labelInd]);
+  }, [results, labels, labelInd]);
 
   return (
     <div>
       <div className="mt-1 flex justify-center items-center">{getPath(city, district, neighborhood)} </div>
-      <div className="mt-5 flex justify-end items-center">
+      <div className="my-5 flex justify-end items-center">
         <List list={labels} ind={labelInd} setInd={setLabelInd} dispAll={false} cn={"w-36 mr-2"} />
       </div>
       <div className="h-96 flex items-center justify-center">
